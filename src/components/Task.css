@@ -1,9 +1,14 @@
 .task-container{
     background-color: #444;
     margin: 8px 0;
-    padding: 15px 20px;
-    display: flex;
+    padding: 15px 20px; 
     border-radius: 5px;
+    
+}
+
+.task-content{
+    width: 100%;
+    display: flex;
     justify-content: space-between;
 }
 
@@ -12,8 +17,14 @@
     flex: 2;
 }
 
+.buttons-container{
+    display: flex;
+    justify-content: flex-end;
+}
+
 .remove-task-button,
-.see-task-details-button {
+.see-task-details-button,
+.open-task-description-button {
     background-color: #444;
     border: none;
     font-size: 20px;
@@ -21,4 +32,8 @@
     cursor: pointer;
     flex: 1;
     margin: 0 5px;
+}
+
+.task-description input{
+    width: 100%;
 }

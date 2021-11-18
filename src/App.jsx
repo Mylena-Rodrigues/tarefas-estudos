@@ -1,8 +1,10 @@
 //Bibliotecas
-import React, { useState } from 'react'; //Importar o react pra que o código reconheça a sintaxe e trate ela da forma que ela deve ser tratada
+import React, { useState, useEffect } from 'react'; //Importar o react pra que o código reconheça a sintaxe e trate ela da forma que ela deve ser tratada
 import { v4 as uuidv4 } from 'uuid';
 import { BrowserRouter as Router, Route} from 'react-router-dom'
 
+import {fetchTasks} from './service/index'
+import Context from './Context';
 import './App.css'; //Importar css
 
 //Componentes
@@ -48,15 +50,26 @@ const App = () => {
     completed: true,
   }]);
   //Componente é rederizado quando o valor dele é alterado ou quando as props dele são alteradas
+  const [description, setDescription] = useState("");
+
+
+  const newTasks = async () => {
+    const newTasks = await fetchTasks();
+    setTasks(newTasks);
+  }
+
+useEffect(() => {
+  newTasks();
+}, []) //[] = Só executa o que estiver dentro do useEffect quando o component for montado a primeira vez
 
   const handleTaskAddition = (taskTitle) => {
     const newTasks = [
-      ...tasks, 
       {
-      id: uuidv4(),
-      title: taskTitle,
-      completed: false
-    },
+        id: uuidv4(),
+        title: taskTitle,
+        completed: false
+      },
+      ...tasks,  
   ];
   setTasks(newTasks);
   };
@@ -79,19 +92,25 @@ const App = () => {
 
 return (
   <Router>
+    <Context.Provider>
     <div className='container'>
       <Header/>
       {/* O exact serve pra dizer que os componentes só serão carregados exatamente na página com o '/', caso o contrário eles carregariam em qualquer página, como por exemplo, localhost:3000/2020 ou localhost:3000/Myl*/}
       <Route path="/" exact render = { () => (
         <>
           <AddTask handleTaskAddition = {handleTaskAddition} />
-          <Tasks tasks = {tasks} handleTaskClick = {handleTaskClick} handleTaskDeletion = {handleTaskDeletion} />
+          <Tasks tasks = {tasks} 
+          handleTaskClick = {handleTaskClick} 
+          handleTaskDeletion = {handleTaskDeletion} 
+          description={description}
+          setDescription={setDescription}/>
         </>
       )}/>
       {/*Para renderizar uma função, com vários componentes, usa-se "render", mas para renderizar um único componente usa-se "component" como no exemplo a seguir */}
       <Route path="/:taskTitle" exact render = { () => (
         <TaskDetails/>)}/>
     </div>
+    </Context.Provider>
   </Router>
 );
 };
